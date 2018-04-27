@@ -1,2 +1,2 @@
-# mailtemplater
-Mail template library
+# MailTemplater
+Mail templates library
