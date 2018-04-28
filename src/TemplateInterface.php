@@ -13,4 +13,23 @@ namespace HalimonAlexander\MailTemplater;
 
 interface TemplateInterface
 {
+    /**
+     * @return array
+     */
+    public function getAttachments(): array;
+
+    /**
+     * @return string
+     */
+    public function getHtmlBody(): string;
+
+    /**
+     * @return string
+     */
+    public function getPlaintextBody(): string;
+
+    /**
+     * @return string
+     */
+    public function getSubject(): string;
 }
