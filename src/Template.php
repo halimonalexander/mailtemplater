@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of MailTemplater.
  *
@@ -7,42 +8,90 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 declare(strict_types=1);
 
 namespace HalimonAlexander\MailTemplater;
 
 use HalimonAlexander\MailTemplater\Exceptions\InvalidMarkup;
-use Smarty;
-use SmartyException;
-use Exception;
+use HalimonAlexander\MailTemplater\Exceptions\UnknownTemplateEngine;
+use HalimonAlexander\MailTemplater\TemplateEngines\TemplateEngineInterface;
 
 abstract class Template implements TemplateInterface
 {
-    protected $attachments;
-    protected $data;
-    protected $language;
-    protected $smarty;
+    public const TEMPLATE_ENGINE_SMARTY = 'smarty';
+    public const TEMPLATE_ENGINE_TWIG   = 'twig';
 
-    protected $htmlFilename = 'html.tpl';
-    protected $plaintextFilename = 'plaintext.tpl';
+    /**
+     * @var string|null
+     */
+    protected static $templateEngineType = null;
 
+    /**
+     * @var Attachment[]
+     */
+    private $attachments;
+
+    /**
+     * @var array
+     */
+    private $data;
+
+    /**
+     * @var string
+     */
+    protected $filename;
+
+    /**
+     * @var string
+     */
     protected $subject;
-    protected $templatesFolder;
+
+    /**
+     * @var TemplateEngineInterface
+     */
+    private $templateEngine;
+
+    /**
+     * @var string
+     */
+    private $templateFolder;
 
     abstract protected function getHtmlData(): array;
 
     abstract protected function getPlaintextData(): array;
 
     /**
-     * @param Smarty $smarty
-     * @param string $language
+     * @return string
+     *
+     * @throws UnknownTemplateEngine
+     */
+    final public static function getTemplateEngineType(): string
+    {
+        if (
+            static::$templateEngineType === null ||
+            !in_array(
+                static::$templateEngineType,
+                [
+                    self::TEMPLATE_ENGINE_SMARTY,
+                    self::TEMPLATE_ENGINE_TWIG,
+                ]
+            )
+        ) {
+            throw new UnknownTemplateEngine('');
+        }
+
+        return static::$templateEngineType;
+    }
+
+    /**
+     * @param string $templateFolder
      * @param array $data
      * @param Attachment[] $attachments
      */
-    public function __construct(Smarty $smarty, string $language, array $data, array $attachments)
+    public function __construct(string $templateFolder, array $data, array $attachments)
     {
-        $this->smarty = $smarty;
-        $this->language = $language;
+        $this->templateFolder = $templateFolder;
         $this->data = $data;
         $this->attachments = $attachments;
     }
@@ -56,14 +105,29 @@ abstract class Template implements TemplateInterface
     }
 
     /**
+     * @return array
+     */
+    final public function getData(): array
+    {
+        return $this->data;
+    }
+
+    /**
      * @return string
      * @throws InvalidMarkup
      */
     final public function getHtmlBody(): string
     {
-        $this->smarty->assign($this->getHtmlData());
-
-        return $this->fetch($this->templatesFolder . $this->htmlFilename);
+        return $this->templateEngine->fetch(
+            sprintf(
+                '%s%s.%s.%s',
+                $this->templateFolder,
+                $this->filename,
+                'html',
+                $this->templateEngine->getExtension()
+            ),
+            $this->getHtmlData()
+        );
     }
 
     /**
@@ -72,9 +136,16 @@ abstract class Template implements TemplateInterface
      */
     final public function getPlaintextBody(): string
     {
-        $this->smarty->assign($this->getPlaintextData());
-
-        return $this->fetch($this->templatesFolder . $this->plaintextFilename);
+        return $this->templateEngine->fetch(
+            sprintf(
+                '%s%s.%s.%s',
+                $this->templateFolder,
+                $this->filename,
+                'txt',
+                $this->templateEngine->getExtension()
+            ),
+            $this->getPlaintextData()
+        );
     }
 
     /**
@@ -86,21 +157,10 @@ abstract class Template implements TemplateInterface
     }
 
     /**
-     * @param string $template
-     *
-     * @return string
-     * @throws InvalidMarkup
+     * @param TemplateEngineInterface $templateEngine
      */
-    private function fetch(string $template): string
+    final public function setTemplateEngine(TemplateEngineInterface $templateEngine)
     {
-        try {
-            $result = $this->smarty->fetch($template);
-        } catch (SmartyException $exception) {
-            throw new InvalidMarkup($exception->getMessage());
-        } catch (Exception $exception) {
-            throw new InvalidMarkup($exception->getMessage());
-        }
-
-        return $result;
+        $this->templateEngine = $templateEngine;
     }
 }

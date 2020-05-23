@@ -15,6 +15,6 @@ namespace HalimonAlexander\MailTemplater\Exceptions;
 
 use RuntimeException;
 
-class UnknownTemplate  extends RuntimeException
+class UnknownTemplateEngine extends RuntimeException
 {
 }
