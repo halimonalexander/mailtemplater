@@ -21,15 +21,8 @@ use Twig\Error\SyntaxError;
 
 class Twig extends AbstractTemplateEngine
 {
-    /**
-     * @var Environment
-     */
-    private $twig;
-
-    /**
-     * @var string
-     */
-    protected $extension = 'twig';
+    private Environment $twig;
+    protected string $extension = 'twig';
 
     /**
      * @param Environment $twig

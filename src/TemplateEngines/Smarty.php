@@ -17,15 +17,8 @@ use HalimonAlexander\MailTemplater\Exceptions\InvalidMarkup;
 
 class Smarty extends AbstractTemplateEngine
 {
-    /**
-     * @var \Smarty
-     */
-    private $smarty;
-
-    /**
-     * @var string
-     */
-    protected $extension = 'tpl';
+    private \Smarty $smarty;
+    protected string $extension = 'tpl';
 
     /**
      * @param \Smarty $smarty

@@ -22,43 +22,19 @@ abstract class Template implements TemplateInterface
     public const TEMPLATE_ENGINE_SMARTY = 'smarty';
     public const TEMPLATE_ENGINE_TWIG   = 'twig';
 
-    /**
-     * @var string|null
-     */
-    protected static $templateEngineType = null;
+    protected static ?string $templateEngineType = null;
 
     /**
      * @var Attachment[]
      */
-    private $attachments;
-
-    /**
-     * @var array
-     */
-    private $data;
-
-    /**
-     * @var string
-     */
-    protected $filename;
-
-    /**
-     * @var string
-     */
-    protected $subject;
-
-    /**
-     * @var TemplateEngineInterface
-     */
-    private $templateEngine;
-
-    /**
-     * @var string
-     */
-    private $templateFolder;
+    private array $attachments;
+    protected array $data;
+    protected string $filename;
+    protected string $subject;
+    private string $templateFolder;
+    private TemplateEngineInterface $templateEngine;
 
     abstract protected function getHtmlData(): array;
-
     abstract protected function getPlaintextData(): array;
 
     /**
@@ -102,14 +78,6 @@ abstract class Template implements TemplateInterface
     final public function getAttachments(): array
     {
         return $this->attachments;
-    }
-
-    /**
-     * @return array
-     */
-    final public function getData(): array
-    {
-        return $this->data;
     }
 
     /**

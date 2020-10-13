@@ -15,19 +15,7 @@ namespace HalimonAlexander\MailTemplater\TemplateEngines;
 
 abstract class AbstractTemplateEngine implements TemplateEngineInterface
 {
-    /**
-     * @var string
-     */
-    protected $extension;
-
-    /**
-     * @param $entity
-     *
-     * @return mixed
-     *
-     * @throws \InvalidArgumentException
-     */
-    abstract public function set($entity): void;
+    protected string $extension;
 
     /**
      * @return string

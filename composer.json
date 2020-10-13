@@ -14,7 +14,7 @@
     "issues": "https://github.com/halimonalexander/mailtemplater/issues"
   },
   "require": {
-    "php": "^7.2",
+    "php": "^7.4",
     "smarty/smarty": "^3.0",
     "twig/twig": "^3.0"
   },

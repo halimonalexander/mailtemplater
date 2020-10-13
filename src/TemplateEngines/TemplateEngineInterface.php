@@ -28,4 +28,13 @@ interface TemplateEngineInterface
      * @throws InvalidMarkup
      */
     public function fetch(string $templateName, array $data = []): string;
+
+    /**
+     * @param $engine
+     *
+     * @return void
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function set($engine): void;
 }

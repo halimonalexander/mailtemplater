@@ -24,25 +24,10 @@ use Twig\Environment;
 
 class TemplateFactory
 {
-    /**
-     * @var Smarty
-     */
-    private $smarty;
-
-    /**
-     * @var Environment
-     */
-    private $twig;
-
-    /**
-     * @var string
-     */
-    private $baseNamespace;
-
-    /**
-     * @var
-     */
-    private $templatesFolder;
+    private Smarty $smarty;
+    private Environment $twig;
+    private string $baseNamespace;
+    private string $templatesFolder;
 
     /**
      * @param string $baseNamespace
@@ -104,8 +89,6 @@ class TemplateFactory
             throw new UnknownTemplate(sprintf('Class %s exists, but is not instance of TemplateInterface', $templateName));
         }
 
-        $templateEngineType = $this->getTemplateEngineType($templateClassname);
-
         /** @var Template $template */
         $template = new $templateClassname(
             $this->templatesFolder,
@@ -113,11 +96,12 @@ class TemplateFactory
             $this->getAttachments($attachments)
         );
 
-        switch ($templateEngineType) {
+        switch ($this->getTemplateEngineType($templateClassname)) {
             case Template::TEMPLATE_ENGINE_SMARTY:
                 $templateEngine = new SmartyTemplateEngine();
                 $templateEngine->set($this->smarty);
                 break;
+
             case Template::TEMPLATE_ENGINE_TWIG:
                 $templateEngine = new TwigTemplateEngine();
                 $templateEngine->set($this->twig);
